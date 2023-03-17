@@ -5,6 +5,9 @@ libos.entrypoint = "/memcached"
 
 loader.log_level = "{{ log_level }}"
 
+libos.check_invalid_pointers = false
+loader.insecure__use_cmdline_argv = true
+
 # the only dependency is libevent.so, found under `/usr/{{ arch_libdir }}`
 loader.env.LD_LIBRARY_PATH = "/lib:/usr/{{ arch_libdir }}"
 
@@ -24,14 +27,17 @@ fs.mounts = [
 ]
 
 sgx.debug = true
-sgx.edmm_enable = {{ 'true' if env.get('EDMM', '0') == '1' else 'false' }}
-sgx.max_threads = 16
+sgx.nonpie_binary = true
+sgx.max_threads = 140
+
+#sgx.profile.enable = "all"
+#sgx.profile.with_stack = true
 
 # Memcached does not fail explicitly when enclave memory is exhausted. Instead, Memcached goes into
 # infinite loop without a listening socket. You can trigger this incorrect behavior by increasing
 # the number of threads to 12 (each thread requires 128MB of memory): `memcached -t 12`. This is an
 # issue in Memcached source code, not related to Gramine.
-sgx.enclave_size = "1024M"
+sgx.enclave_size = "8G"
 
 sgx.trusted_files = [
   "file:memcached",
