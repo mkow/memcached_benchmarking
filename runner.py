@@ -250,7 +250,7 @@ def main_matrix_benchmark(args):
     else:
         raise RuntimeError('master commit not specified!')
 
-    for srv_threads, req_size in tqdm(product(range(1, 32), range(4096, 4096*32, 4096))):
+    for srv_threads, req_size in tqdm(list(product(range(1, 32), range(4096, 4096*32, 4096)))):
         log(f'Testing ')
         # for  in tqdm():
         log('Running direct...')
