@@ -222,6 +222,7 @@ def print_matrix(m):
     print(f'{"":>8} ', end='')
     for y in cols:
         print(f'{y:>8} ', end='')
+    print()
     for x in rows:
         print(f'{x:>8} ', end='')
         for y in cols:
