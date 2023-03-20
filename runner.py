@@ -210,16 +210,16 @@ def main_rwlock_benchmark(args):
     )
     return 0
 
-def print_matrix(m):
-    cols = set()
-    rows = set()
-    for x,y in m:
-        rows.add(x)
-        cols.add(y)
-    cols = list(cols)
-    cols.sort()
-    rows = list(rows)
-    rows.sort()
+def print_matrix(cols, rows, m):
+    # cols = set()
+    # rows = set()
+    # for x,y in m:
+    #     rows.add(x)
+    #     cols.add(y)
+    # cols = list(cols)
+    # cols.sort()
+    # rows = list(rows)
+    # rows.sort()
     print(f'{"":>8} ', end='')
     for y in cols:
         print(f'{y:>8} ', end='')
@@ -293,9 +293,9 @@ def main_matrix_benchmark(args):
     # print(res_direct)
     # print(res_sgx)
         print('-'*150)
-        print_matrix(res_direct)
+        print_matrix(list(srv_threads_range), list(req_size_range), res_direct)
         print()
-        print_matrix(res_sgx)
+        print_matrix(list(srv_threads_range), list(req_size_range), res_sgx)
     # print_matrix({(1, 4096): -0.6081262562310951, (1, 8192): -0.6720628415164789, (2, 4096): -0.43903119908452604, (2, 8192): -0.4794070685294414})
     # print()
     # print_matrix({(1, 4096): -0.8768565256309072, (1, 8192): -0.8946999014260856, (2, 4096): -0.7859536577388341, (2, 8192): -0.8191668526645598})
