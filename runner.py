@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import randon
 import socket
 import subprocess
 import sys
@@ -277,7 +278,9 @@ def main_matrix_benchmark(args):
     req_size_range = range(4096, 4096*33, 4096)
     res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
-    for srv_threads, req_size in tqdm(list(product(srv_threads_range, req_size_range))):
+    todo = list(product(srv_threads_range, req_size_range))
+    random.shuffle(todo) # for faster/better live results overview
+    for srv_threads, req_size in tqdm(todo):
         log(f'Testing ')
         # for  in tqdm():
         log('Running direct...')
