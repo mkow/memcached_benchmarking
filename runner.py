@@ -93,14 +93,14 @@ def test_config(srv_binary, prepended_args, srv_threads=16, req_size=4096):
     kill_server(srv)
     return res
 
-def test_native():
-    return test_config('./memcached', [])
+def test_native(srv_threads=16, req_size=4096):
+    return test_config('./memcached', [], srv_threads, req_size)
 
-def test_direct():
-    return test_config('gramine-direct', ['./memcached'])
+def test_direct(srv_threads=16, req_size=4096):
+    return test_config('gramine-direct', ['./memcached'], srv_threads, req_size)
 
-def test_sgx():
-    return test_config('gramine-sgx', ['./memcached'])
+def test_sgx(srv_threads=16, req_size=4096):
+    return test_config('gramine-sgx', ['./memcached'], srv_threads, req_size)
 
 def print_stats(stats):
     fmt = '{:<14}' + '{:>15}' * 8
@@ -175,5 +175,59 @@ def main_rwlock_benchmark(args):
     )
     return 0
 
+def main_matrix_benchmark(args):
+    if len(args) < 1:
+        print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
+        return 2
+    results = []
+
+    subprocess.run('make -j8', shell=True, check=True)
+    print('Running native...')
+    native_stats = test_native()
+    results.append(('native', native_stats))
+
+    for remote, commit, title in COMMITS:
+        # the ugly part
+        if title == 'master':
+            print(f'Checking {remote}/{commit}...')
+            assert 'REMOTE' in args[1]
+            assert 'COMMIT' in args[1]
+            subprocess.run(args[1].replace('REMOTE', remote).replace('COMMIT', commit), shell=True, check=True)
+            subprocess.run('make clean && make -j8 SGX=1', shell=True, check=True)
+            break
+    else:
+        raise RuntimeError('master commit not specified!')
+
+    for srv_threads in tqdm(range(1, 32)):
+        # print(f'Testing ')
+        for req_size in range(4096, 4096*32, 4096):
+            print('Running direct...')
+            direct_stats = test_direct()
+            results.append((title + '-direct', direct_stats))
+            print('Running sgx...')
+            sgx_stats = test_sgx()
+            results.append((title + '-sgx', sgx_stats))
+
+    print_stats(results)
+    print()
+    print_delta_stats(
+        stats = results,
+        baseline = 'native',
+    )
+    print()
+    print_delta_stats(
+        stats = results,
+        baseline = 'master-direct',
+        include_only = ['rwlock-direct']
+    )
+    print()
+    print_delta_stats(
+        stats = results,
+        baseline = 'master-sgx',
+        include_only = ['rwlock-sgx']
+    )
+    return 0
+
 if __name__ == '__main__':
-    raise SystemExit(main_rwlock_benchmark(sys.argv))
+    # raise SystemExit(main_rwlock_benchmark(sys.argv))
+    raise SystemExit(main_matrix_benchmark(sys.argv))
