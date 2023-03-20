@@ -28,7 +28,7 @@ fs.mounts = [
 
 sgx.debug = true
 sgx.nonpie_binary = true
-sgx.max_threads = 140
+sgx.max_threads = 40
 
 #sgx.profile.enable = "all"
 #sgx.profile.with_stack = true
@@ -37,7 +37,7 @@ sgx.max_threads = 140
 # infinite loop without a listening socket. You can trigger this incorrect behavior by increasing
 # the number of threads to 12 (each thread requires 128MB of memory): `memcached -t 12`. This is an
 # issue in Memcached source code, not related to Gramine.
-sgx.enclave_size = "8G"
+sgx.enclave_size = "1G"
 
 sgx.trusted_files = [
   "file:memcached",
