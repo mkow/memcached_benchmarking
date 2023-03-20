@@ -4,7 +4,7 @@ import socket
 import subprocess
 import sys
 import time
-import tqdm
+from tqdm import tqdm
 from random import randint
 
 HOST = '127.0.0.1'
