@@ -104,7 +104,7 @@ def benchmark(req_size, time_s):
 
 def test_config(srv_binary, prepended_args, srv_threads=16, req_size=4096):
     srv = spawn_server(srv_binary, prepended_args, srv_threads)
-    res = benchmark(req_size, time_s=30)
+    res = benchmark(req_size, time_s=3)
     # res = benchmark(req_size, time_s=180)
     kill_server(srv)
     return res
@@ -250,14 +250,20 @@ def main_matrix_benchmark(args):
     else:
         raise RuntimeError('master commit not specified!')
 
-    for srv_threads, req_size in tqdm(list(product(range(1, 32), range(4096, 4096*32, 4096)))):
+    srv_threads_range = range(1, 2)
+    # srv_threads_range = range(1, 32)
+    req_size_range = range(4096, 4096*3, 4096)
+    # req_size_range = range(4096, 4096*33, 4096)
+    res_direct = [[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    res_sgx = [[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    for srv_threads, req_size in tqdm(list(product(srv_threads_range, req_size_range))):
         log(f'Testing ')
         # for  in tqdm():
         log('Running direct...')
-        direct_stats = test_direct()
+        direct_stats = test_direct(srv_threads, req_size)
         results.append((title + '-direct', direct_stats))
         log('Running sgx...')
-        sgx_stats = test_sgx()
+        sgx_stats = test_sgx(srv_threads, req_size)
         results.append((title + '-sgx', sgx_stats))
 
     print_stats(results)
