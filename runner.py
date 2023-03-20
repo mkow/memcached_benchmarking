@@ -246,7 +246,6 @@ def main_matrix_benchmark(args):
         stderr=logf,
     )
     log('Running native...')
-    native_stats = test_native()
 
     for remote, commit, title in COMMITS:
         # the ugly part
@@ -282,6 +281,7 @@ def main_matrix_benchmark(args):
     random.shuffle(todo) # for faster/better live results overview
     for srv_threads, req_size in tqdm(todo):
         log(f'Testing ')
+        native_stats = test_native(srv_threads, req_size)
         # for  in tqdm():
         log('Running direct...')
         stats = test_direct(srv_threads, req_size)
