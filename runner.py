@@ -225,7 +225,7 @@ def print_matrix(m):
     for x in rows:
         print(f'{x:>8} ', end='')
         for y in cols:
-            print(f'{m[x,y]:>8.1f}% ', end='')
+            print(f'{m[x,y]:>7.1f}% ', end='')
         print()
 
 def main_matrix_benchmark(args):
