@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import randon
+import random
 import socket
 import subprocess
 import sys
