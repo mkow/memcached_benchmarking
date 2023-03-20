@@ -143,7 +143,13 @@ def main_rwlock_benchmark(args):
         return 2
     results = []
 
-    subprocess.run('make -j8', shell=True, check=True)
+    subprocess.run(
+        'make -j8',
+        shell=True,
+        check=True,
+        stdout=logf,
+        stderr=logf,
+    )
     print('Running native...')
     native_stats = test_native()
     results.append(('native', native_stats))
@@ -153,8 +159,20 @@ def main_rwlock_benchmark(args):
         print(f'Checking {remote}/{commit}...')
         assert 'REMOTE' in args[1]
         assert 'COMMIT' in args[1]
-        subprocess.run(args[1].replace('REMOTE', remote).replace('COMMIT', commit), shell=True, check=True)
-        subprocess.run('make clean && make -j8 SGX=1', shell=True, check=True)
+        subprocess.run(
+            args[1].replace('REMOTE', remote).replace('COMMIT', commit),
+            shell=True,
+            check=True,
+            stdout=logf,
+            stderr=logf,
+        )
+        subprocess.run(
+            'make clean && make -j8 SGX=1',
+            shell=True,
+            check=True,
+            stdout=logf,
+            stderr=logf,
+        )
         print('Running direct...')
         direct_stats = test_direct()
         results.append((title + '-direct', direct_stats))
@@ -188,7 +206,13 @@ def main_matrix_benchmark(args):
         return 2
     results = []
 
-    subprocess.run('make -j8', shell=True, check=True)
+    subprocess.run(
+        'make -j8',
+        shell=True,
+        check=True,
+        stdout=logf,
+        stderr=logf,
+    )
     print('Running native...')
     native_stats = test_native()
     results.append(('native', native_stats))
@@ -199,8 +223,20 @@ def main_matrix_benchmark(args):
             print(f'Checking {remote}/{commit}...')
             assert 'REMOTE' in args[1]
             assert 'COMMIT' in args[1]
-            subprocess.run(args[1].replace('REMOTE', remote).replace('COMMIT', commit), shell=True, check=True)
-            subprocess.run('make clean && make -j8 SGX=1', shell=True, check=True)
+            subprocess.run(
+                args[1].replace('REMOTE', remote).replace('COMMIT', commit),
+                shell=True,
+                check=True,
+                stdout=logf,
+                stderr=logf,
+            )
+            subprocess.run(
+                'make clean && make -j8 SGX=1',
+                shell=True,
+                check=True,
+                stdout=logf,
+                stderr=logf,
+            )
             break
     else:
         raise RuntimeError('master commit not specified!')
