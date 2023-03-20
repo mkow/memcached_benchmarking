@@ -219,12 +219,13 @@ def print_matrix(m):
     cols.sort()
     rows = list(rows)
     rows.sort()
+    print(f'{"":>8} ', end='')
     for y in cols:
         print(f'{y:>8} ', end='')
     for x in rows:
         print(f'{x:>8} ', end='')
         for y in cols:
-            print(f'{m[x,y]:.1f}% ', end='')
+            print(f'{m[x,y]:>8.1f}% ', end='')
         print()
 
 def main_matrix_benchmark(args):
