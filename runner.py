@@ -253,12 +253,12 @@ def main_matrix_benchmark(args):
     for srv_threads, req_size in tqdm(product(range(1, 32), range(4096, 4096*32, 4096))):
         log(f'Testing ')
         # for  in tqdm():
-            log('Running direct...')
-            direct_stats = test_direct()
-            results.append((title + '-direct', direct_stats))
-            log('Running sgx...')
-            sgx_stats = test_sgx()
-            results.append((title + '-sgx', sgx_stats))
+        log('Running direct...')
+        direct_stats = test_direct()
+        results.append((title + '-direct', direct_stats))
+        log('Running sgx...')
+        sgx_stats = test_sgx()
+        results.append((title + '-sgx', sgx_stats))
 
     print_stats(results)
     print()
