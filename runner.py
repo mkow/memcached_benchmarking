@@ -209,6 +209,24 @@ def main_rwlock_benchmark(args):
     )
     return 0
 
+def print_matrix(m):
+    cols = set()
+    rows = set()
+    for x,y in m:
+        rows.add(x)
+        cols.add(y)
+    cols = list(cols)
+    cols.sort()
+    rows = list(rows)
+    rows.sort()
+    for y in cols:
+        print(f'{y:>8} ', end='')
+    for x in rows:
+        print(f'{x:>8} ', end='')
+        for y in cols:
+            print(f'{m[x,y]:.1f}% ', end='')
+        print()
+
 def main_matrix_benchmark(args):
     if len(args) < 1:
         print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
@@ -248,24 +266,26 @@ def main_matrix_benchmark(args):
     else:
         raise RuntimeError('master commit not specified!')
 
-    srv_threads_range = range(1, 3)
-    # srv_threads_range = range(1, 32)
-    req_size_range = range(4096, 4096*3, 4096)
-    # req_size_range = range(4096, 4096*33, 4096)
-    res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
-    res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
-    for srv_threads, req_size in tqdm(list(product(srv_threads_range, req_size_range))):
-        log(f'Testing ')
-        # for  in tqdm():
-        log('Running direct...')
-        stats = test_direct(srv_threads, req_size)
-        # Only Ops/s
-        res_direct[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0]
-        log('Running sgx...')
-        stats = test_sgx(srv_threads, req_size)
-        res_sgx[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0]
-    print(res_direct)
-    print(res_sgx)
+    # srv_threads_range = range(1, 3)
+    # # srv_threads_range = range(1, 32)
+    # req_size_range = range(4096, 4096*3, 4096)
+    # # req_size_range = range(4096, 4096*33, 4096)
+    # res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    # res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    # for srv_threads, req_size in tqdm(list(product(srv_threads_range, req_size_range))):
+    #     log(f'Testing ')
+    #     # for  in tqdm():
+    #     log('Running direct...')
+    #     stats = test_direct(srv_threads, req_size)
+    #     # Only Ops/s
+    #     res_direct[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
+    #     log('Running sgx...')
+    #     stats = test_sgx(srv_threads, req_size)
+    #     res_sgx[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
+    # print_matrix(res_direct)
+    # print_matrix(res_sgx)
+    print_matrix({(1, 4096): -0.6081262562310951, (1, 8192): -0.6720628415164789, (2, 4096): -0.43903119908452604, (2, 8192): -0.4794070685294414})
+    print_matrix({(1, 4096): -0.8768565256309072, (1, 8192): -0.8946999014260856, (2, 4096): -0.7859536577388341, (2, 8192): -0.8191668526645598})
     return 0
 
 if __name__ == '__main__':
