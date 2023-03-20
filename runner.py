@@ -250,7 +250,7 @@ def main_matrix_benchmark(args):
 
     for remote, commit, title in COMMITS:
         # the ugly part
-        if title == 'master':
+        if title == 'rwlock':
             log(f'Checking {remote}/{commit}...')
             assert 'REMOTE' in args[1]
             assert 'COMMIT' in args[1]
@@ -270,7 +270,7 @@ def main_matrix_benchmark(args):
             )
             break
     else:
-        raise RuntimeError('master commit not specified!')
+        raise RuntimeError('rwlock commit not specified!')
 
     # srv_threads_range = range(16, 19)
     srv_threads_range = range(1, 32)
