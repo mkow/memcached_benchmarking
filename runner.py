@@ -5,8 +5,9 @@ import subprocess
 import sys
 import time
 from datetime import datetime
-from tqdm import tqdm
+from itertools import product
 from random import randint
+from tqdm import tqdm
 
 HOST = '127.0.0.1'
 PORT = 10000 + randint(0, 20000)
@@ -249,9 +250,9 @@ def main_matrix_benchmark(args):
     else:
         raise RuntimeError('master commit not specified!')
 
-    for srv_threads in tqdm(range(1, 32)):
+    for srv_threads, req_size in tqdm(product(range(1, 32), range(4096, 4096*32, 4096))):
         log(f'Testing ')
-        for req_size in tqdm(range(4096, 4096*32, 4096)):
+        # for  in tqdm():
             log('Running direct...')
             direct_stats = test_direct()
             results.append((title + '-direct', direct_stats))
