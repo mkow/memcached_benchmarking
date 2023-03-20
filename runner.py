@@ -275,7 +275,7 @@ def main_matrix_benchmark(args):
     # srv_threads_range = range(16, 19)
     srv_threads_range = range(1, 32)
     # req_size_range = range(4096, 4096*3, 4096)
-    req_size_range = range(4096, 4096*33, 4096)
+    req_size_range = range(4096, 4096*20, 4096)
     res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     todo = list(product(srv_threads_range, req_size_range))
