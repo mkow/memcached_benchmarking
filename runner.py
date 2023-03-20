@@ -14,8 +14,16 @@ COMMITS = [
     ('origin', '634d0392c3acec724dad5a6af8e6305f166eca57', 'master'), # merge_base(master, borys/handle_map)
     ('origin', '46c5b157012dce9c7cf943fc7fe9e4e27a20eeaf', 'rwlock'), # borys/handle_map
 ]
+# for noisy commands output
 LOG_PATH = f'log_{str(datetime.now())}.txt'
 logf = open(LOG_PATH, 'w')
+
+# only for some progress prints
+VERBOSE = False
+
+def log(*args, **kwargs):
+    if VERBOSE:
+        print(*args, **kwargs)
 
 def spawn_server(srv_binary, prepended_args, threads):
     # -t, --threads=<num>       number of threads to use (default: 4)
@@ -36,20 +44,20 @@ def spawn_server(srv_binary, prepended_args, threads):
     return p
 
 def wait_for_server(host, port):
-    print('Waiting for the server...')
+    log('Waiting for the server...')
     while True:
         try:
             with socket.create_connection((HOST, PORT)) as s:
                 break
         except ConnectionRefusedError:
             time.sleep(0.1)
-    print('Server is up!')
+    log('Server is up!')
 
 def kill_server(p):
-    print('Killing server...')
+    log('Killing server...')
     p.terminate()
     p.wait()
-    print('Done.')
+    log('Done.')
 
 def cut_between(source, before, after):
     pos1 = source.find(before)
@@ -150,13 +158,13 @@ def main_rwlock_benchmark(args):
         stdout=logf,
         stderr=logf,
     )
-    print('Running native...')
+    log('Running native...')
     native_stats = test_native()
     results.append(('native', native_stats))
 
     for remote, commit, title in COMMITS:
         # the ugly part
-        print(f'Checking {remote}/{commit}...')
+        log(f'Checking {remote}/{commit}...')
         assert 'REMOTE' in args[1]
         assert 'COMMIT' in args[1]
         subprocess.run(
@@ -173,10 +181,10 @@ def main_rwlock_benchmark(args):
             stdout=logf,
             stderr=logf,
         )
-        print('Running direct...')
+        log('Running direct...')
         direct_stats = test_direct()
         results.append((title + '-direct', direct_stats))
-        print('Running sgx...')
+        log('Running sgx...')
         sgx_stats = test_sgx()
         results.append((title + '-sgx', sgx_stats))
 
@@ -213,14 +221,14 @@ def main_matrix_benchmark(args):
         stdout=logf,
         stderr=logf,
     )
-    print('Running native...')
+    log('Running native...')
     native_stats = test_native()
     results.append(('native', native_stats))
 
     for remote, commit, title in COMMITS:
         # the ugly part
         if title == 'master':
-            print(f'Checking {remote}/{commit}...')
+            log(f'Checking {remote}/{commit}...')
             assert 'REMOTE' in args[1]
             assert 'COMMIT' in args[1]
             subprocess.run(
@@ -242,12 +250,12 @@ def main_matrix_benchmark(args):
         raise RuntimeError('master commit not specified!')
 
     for srv_threads in tqdm(range(1, 32)):
-        # print(f'Testing ')
-        for req_size in range(4096, 4096*32, 4096):
-            print('Running direct...')
+        log(f'Testing ')
+        for req_size in tqdm(range(4096, 4096*32, 4096)):
+            log('Running direct...')
             direct_stats = test_direct()
             results.append((title + '-direct', direct_stats))
-            print('Running sgx...')
+            log('Running sgx...')
             sgx_stats = test_sgx()
             results.append((title + '-sgx', sgx_stats))
 
