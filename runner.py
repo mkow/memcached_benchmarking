@@ -252,18 +252,18 @@ def main_matrix_benchmark(args):
     # srv_threads_range = range(1, 32)
     req_size_range = range(4096, 4096*3, 4096)
     # req_size_range = range(4096, 4096*33, 4096)
-    res_direct = [[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
-    res_sgx = [[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     for srv_threads, req_size in tqdm(list(product(srv_threads_range, req_size_range))):
         log(f'Testing ')
         # for  in tqdm():
         log('Running direct...')
         stats = test_direct(srv_threads, req_size)
         # Only Ops/s
-        res_direct[srv_threads][req_size] = (stats[0] - native_stats[0]) / native_stats[0]
+        res_direct[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0]
         log('Running sgx...')
         stats = test_sgx(srv_threads, req_size)
-        res_sgx[srv_threads][req_size] = (stats[0] - native_stats[0]) / native_stats[0]
+        res_sgx[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0]
     print(res_direct)
     print(res_sgx)
     return 0
