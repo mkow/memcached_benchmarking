@@ -210,7 +210,7 @@ def main_rwlock_benchmark(args):
     )
     return 0
 
-def print_matrix(cols, rows, m):
+def print_matrix(rows, cols, m):
     # cols = set()
     # rows = set()
     # for x,y in m:
