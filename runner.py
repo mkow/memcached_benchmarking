@@ -250,7 +250,7 @@ def main_matrix_benchmark(args):
     else:
         raise RuntimeError('master commit not specified!')
 
-    srv_threads_range = range(1, 2)
+    srv_threads_range = range(1, 3)
     # srv_threads_range = range(1, 32)
     req_size_range = range(4096, 4096*3, 4096)
     # req_size_range = range(4096, 4096*33, 4096)
