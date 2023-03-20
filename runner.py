@@ -4,6 +4,7 @@ import socket
 import subprocess
 import sys
 import time
+from datetime import datetime
 from tqdm import tqdm
 from random import randint
 
@@ -13,18 +14,24 @@ COMMITS = [
     ('origin', '634d0392c3acec724dad5a6af8e6305f166eca57', 'master'), # merge_base(master, borys/handle_map)
     ('origin', '46c5b157012dce9c7cf943fc7fe9e4e27a20eeaf', 'rwlock'), # borys/handle_map
 ]
+LOG_PATH = f'log_{str(datetime.now())}.txt'
+logf = open(LOG_PATH, 'w')
 
 def spawn_server(srv_binary, prepended_args, threads):
     # -t, --threads=<num>       number of threads to use (default: 4)
     # -c, --conn-limit=<num>    max simultaneous connections (default: 1024)
     # -p, --port=<num>          TCP port to listen on (default: 11211)
     # -B, --protocol=<name>     protocol - one of ascii, binary, or auto (default: auto-negotiate)
-    p = subprocess.Popen(executable=srv_binary, args=[srv_binary] + prepended_args + [
-        '-t', str(threads),
-        '-c', '4096',
-        '-p', str(PORT),
-        '-B', 'binary',
-    ])
+    p = subprocess.Popen(executable=srv_binary,
+        args=[srv_binary] + prepended_args + [
+            '-t', str(threads),
+            '-c', '4096',
+            '-p', str(PORT),
+            '-B', 'binary',
+        ],
+        stdout=logf,
+        stderr=logf,
+    )
     wait_for_server(HOST, PORT)
     return p
 
