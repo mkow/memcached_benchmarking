@@ -213,7 +213,6 @@ def main_matrix_benchmark(args):
     if len(args) < 1:
         print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
         return 2
-    results = []
 
     subprocess.run(
         'make -j8',
@@ -224,7 +223,6 @@ def main_matrix_benchmark(args):
     )
     log('Running native...')
     native_stats = test_native()
-    results.append(('native', native_stats))
 
     for remote, commit, title in COMMITS:
         # the ugly part
@@ -260,30 +258,14 @@ def main_matrix_benchmark(args):
         log(f'Testing ')
         # for  in tqdm():
         log('Running direct...')
-        direct_stats = test_direct(srv_threads, req_size)
-        results.append((title + '-direct', direct_stats))
+        stats = test_direct(srv_threads, req_size)
+        # Only Ops/s
+        res_direct[srv_threads][req_size] = (stats[0] - native_stats[0]) / native_stats[0]
         log('Running sgx...')
-        sgx_stats = test_sgx(srv_threads, req_size)
-        results.append((title + '-sgx', sgx_stats))
-
-    print_stats(results)
-    print()
-    print_delta_stats(
-        stats = results,
-        baseline = 'native',
-    )
-    print()
-    print_delta_stats(
-        stats = results,
-        baseline = 'master-direct',
-        include_only = ['rwlock-direct']
-    )
-    print()
-    print_delta_stats(
-        stats = results,
-        baseline = 'master-sgx',
-        include_only = ['rwlock-sgx']
-    )
+        stats = test_sgx(srv_threads, req_size)
+        res_sgx[srv_threads][req_size] = (stats[0] - native_stats[0]) / native_stats[0]
+    print(res_direct)
+    print(res_sgx)
     return 0
 
 if __name__ == '__main__':
