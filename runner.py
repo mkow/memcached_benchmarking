@@ -105,7 +105,7 @@ def benchmark(req_size, time_s):
 
 def test_config(srv_binary, prepended_args, srv_threads=16, req_size=4096):
     srv = spawn_server(srv_binary, prepended_args, srv_threads)
-    res = benchmark(req_size, time_s=3)
+    res = benchmark(req_size, time_s=10)
     # res = benchmark(req_size, time_s=180)
     kill_server(srv)
     return res
