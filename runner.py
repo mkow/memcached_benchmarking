@@ -105,8 +105,7 @@ def benchmark(req_size, time_s):
 
 def test_config(srv_binary, prepended_args, srv_threads=16, req_size=4096):
     srv = spawn_server(srv_binary, prepended_args, srv_threads)
-    res = benchmark(req_size, time_s=10)
-    # res = benchmark(req_size, time_s=180)
+    res = benchmark(req_size, time_s=60)
     kill_server(srv)
     return res
 
@@ -296,13 +295,13 @@ def main_matrix_benchmark(args):
         print_matrix(list(srv_threads_range), list(req_size_range), res_direct)
         print()
         print_matrix(list(srv_threads_range), list(req_size_range), res_sgx)
-    print(res_direct)
-    print(res_sgx)
+    print(list(srv_threads_range), list(req_size_range), res_direct)
+    print(list(srv_threads_range), list(req_size_range), res_sgx)
     # print_matrix({(1, 4096): -0.6081262562310951, (1, 8192): -0.6720628415164789, (2, 4096): -0.43903119908452604, (2, 8192): -0.4794070685294414})
     # print()
     # print_matrix({(1, 4096): -0.8768565256309072, (1, 8192): -0.8946999014260856, (2, 4096): -0.7859536577388341, (2, 8192): -0.8191668526645598})
     return 0
 
 if __name__ == '__main__':
-    raise SystemExit(main_rwlock_benchmark(sys.argv))
-    # raise SystemExit(main_matrix_benchmark(sys.argv))
+    # raise SystemExit(main_rwlock_benchmark(sys.argv))
+    raise SystemExit(main_matrix_benchmark(sys.argv))
