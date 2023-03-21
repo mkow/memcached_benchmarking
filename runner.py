@@ -272,13 +272,13 @@ def main_matrix_benchmark(args):
         raise RuntimeError('rwlock commit not specified!')
 
     # srv_threads_range = range(16, 19)
-    srv_threads_range = range(1, 32)
+    srv_threads_range = range(1, 33)
     # req_size_range = range(4096, 4096*3, 4096)
     req_size_range = range(4096, 4096*20, 4096)
     res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
     todo = list(product(srv_threads_range, req_size_range))
-    random.shuffle(todo) # for faster/better live results overview
+    random.shuffle(todo) # for faster/better live results overview, plus less accidental time correlation
     for srv_threads, req_size in tqdm(todo):
         log(f'Testing ')
         native_stats = test_native(srv_threads, req_size)
@@ -296,11 +296,13 @@ def main_matrix_benchmark(args):
         print_matrix(list(srv_threads_range), list(req_size_range), res_direct)
         print()
         print_matrix(list(srv_threads_range), list(req_size_range), res_sgx)
+    print(res_direct)
+    print(res_sgx)
     # print_matrix({(1, 4096): -0.6081262562310951, (1, 8192): -0.6720628415164789, (2, 4096): -0.43903119908452604, (2, 8192): -0.4794070685294414})
     # print()
     # print_matrix({(1, 4096): -0.8768565256309072, (1, 8192): -0.8946999014260856, (2, 4096): -0.7859536577388341, (2, 8192): -0.8191668526645598})
     return 0
 
 if __name__ == '__main__':
-    # raise SystemExit(main_rwlock_benchmark(sys.argv))
-    raise SystemExit(main_matrix_benchmark(sys.argv))
+    raise SystemExit(main_rwlock_benchmark(sys.argv))
+    # raise SystemExit(main_matrix_benchmark(sys.argv))
