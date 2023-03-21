@@ -105,7 +105,7 @@ def benchmark(req_size, time_s):
 
 def test_config(srv_binary, prepended_args, srv_threads=16, req_size=4096):
     srv = spawn_server(srv_binary, prepended_args, srv_threads)
-    res = benchmark(req_size, time_s=60)
+    res = benchmark(req_size, time_s=30)
     kill_server(srv)
     return res
 
@@ -244,7 +244,6 @@ def main_matrix_benchmark(args):
         stdout=logf,
         stderr=logf,
     )
-    log('Running native...')
 
     for remote, commit, title in COMMITS:
         # the ugly part
@@ -274,14 +273,13 @@ def main_matrix_benchmark(args):
     srv_threads_range = range(1, 33)
     # req_size_range = range(4096, 4096*3, 4096)
     req_size_range = range(4096, 4096*20, 4096)
-    res_direct = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
-    res_sgx = {} #[[]*len(srv_threads_range) for _ in range(len(srv_threads_range))]
+    res_direct = {}
+    res_sgx = {}
     todo = list(product(srv_threads_range, req_size_range))
     random.shuffle(todo) # for faster/better live results overview, plus less accidental time correlation
     for srv_threads, req_size in tqdm(todo):
-        log(f'Testing ')
+        log('Running native...')
         native_stats = test_native(srv_threads, req_size)
-        # for  in tqdm():
         log('Running direct...')
         stats = test_direct(srv_threads, req_size)
         # Only Ops/s
