@@ -16,10 +16,13 @@ GRAMINE_LOG_LEVEL = error
 endif
 
 .PHONY: all
-all: memcached memcached.manifest memtier_benchmark/memtier_benchmark
+all: memcached memcached.manifest memtier_benchmark/memtier_benchmark c_states_disabler
 ifeq ($(SGX),1)
 all: memcached.manifest.sgx memcached.sig
 endif
+
+c_states_disabler: c_states_disabler.c
+	$(CC) -Wall -Wextra c_states_disabler.c -o c_states_disabler
 
 memcached.tar.gz:
 	./download --output memcached.tar.gz --sha256 $(MEMCACHED_SHA256) \
