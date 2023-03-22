@@ -236,9 +236,6 @@ def print_matrix(rows, cols, m):
         print()
 
 def render_heatmap(rows, cols, m, output_path):
-    vegetables = ["cucumber", "tomato", "lettuce", "asparagus", "potato", "wheat", "barley"]
-    farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening", "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
-
     harvest = np.array([[0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
                         [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
                         [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
@@ -251,15 +248,15 @@ def render_heatmap(rows, cols, m, output_path):
     im = ax.imshow(harvest)
 
     # Show all ticks and label them with the respective list entries
-    ax.set_xticks(np.arange(len(farmers)), labels=farmers)
-    ax.set_yticks(np.arange(len(vegetables)), labels=vegetables)
+    ax.set_xticks(np.arange(len(cols)), labels=cols)
+    ax.set_yticks(np.arange(len(rows)), labels=rows)
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
 
     # Loop over data dimensions and create text annotations.
-    for i in range(len(vegetables)):
-        for j in range(len(farmers)):
+    for i in range(len(rows)):
+        for j in range(len(cols)):
             text = ax.text(j, i, harvest[i, j],
                            ha="center", va="center", color="w")
 
