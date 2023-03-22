@@ -241,8 +241,8 @@ def render_heatmap(rows, cols, m, output_path):
     harvest = np.array([
         [0.8]*y_trim for _ in range(x_trim)
     ])
-    rows = rows[:y_trim]
-    cols = cols[:x_trim]
+    rows = rows[:x_trim]
+    cols = cols[:y_trim]
 
     fig, ax = plt.subplots()
     im = ax.imshow(harvest)
