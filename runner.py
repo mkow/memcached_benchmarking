@@ -265,7 +265,7 @@ def render_heatmap(rows, cols, m, output_path):
 
     ax.set_title("Harvest of local farmers (in tons/year)")
     fig.tight_layout()
-    plt.imsave(output_path)
+    plt.savefig(output_path)
 
 def main_matrix_benchmark(args):
     if len(args) < 1:
