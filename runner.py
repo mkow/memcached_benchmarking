@@ -237,7 +237,7 @@ def print_matrix(rows, cols, m):
 
 def render_heatmap(rows, cols, m, output_path):
     x_trim = 10
-    y_trim = 10
+    y_trim = 19
     harvest = np.array([
         [0.8]*y_trim for _ in range(x_trim)
     ])
