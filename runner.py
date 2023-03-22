@@ -352,7 +352,7 @@ def main_matrix_benchmark(args):
 
 def main(argv):
     # for two-socket ICX machine
-    os.sched_setaffinity(list(range(32))+list(range(64, 96)))
+    os.sched_setaffinity(0, list(range(32))+list(range(64, 96)))
     # return main_rwlock_benchmark(argv)
     return main_matrix_benchmark(argv)
 
