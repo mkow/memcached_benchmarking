@@ -284,12 +284,11 @@ def render_heatmap(rows, cols, m, output_path):
     # Loop over data dimensions and create text annotations.
     for i in range(len(rows)):
         for j in range(len(cols)):
-            text = ax.text(j, i, harvest[i, j],
-                           ha="center", va="center", color="w")
+            text = ax.text(j, i, harvest[i, j], ha="center", va="center", color="w")
 
     ax.set_title("Harvest of local farmers (in tons/year)")
     fig.tight_layout()
-    plt.savefig(output_path)
+    plt.savefig(output_path, dpi=10.0)
 
 def main_matrix_benchmark(args):
     if len(args) < 1:
