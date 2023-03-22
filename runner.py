@@ -244,7 +244,7 @@ def render_heatmap(rows, cols, m, output_path):
     rows = rows[:x_trim]
     cols = cols[:y_trim]
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(14,14))
     im = ax.imshow(harvest)
 
     # Show all ticks and label them with the respective list entries
@@ -261,7 +261,7 @@ def render_heatmap(rows, cols, m, output_path):
 
     ax.set_title("Harvest of local farmers (in tons/year)")
     fig.tight_layout()
-    plt.savefig(output_path, dpi=1200.0)
+    plt.savefig(output_path, dpi=600.0)
 
 def main_matrix_benchmark(args):
     if len(args) < 1:
