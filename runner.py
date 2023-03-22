@@ -251,8 +251,8 @@ def render_heatmap(rows, cols, m, output_path):
     im = ax.imshow(harvest)
 
     # Show all ticks and label them with the respective list entries
-    ax.set_xticks(np.arange(len(farmers)), labels=farmers)
-    ax.set_yticks(np.arange(len(vegetables)), labels=vegetables)
+    ax.set_xticks(farmers)
+    ax.set_yticks(vegetables)
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
