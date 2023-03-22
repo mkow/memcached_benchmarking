@@ -244,7 +244,7 @@ def render_heatmap(rows, cols, m, output_path):
     # rows = rows[:x_trim]
     # cols = cols[:y_trim]
 
-    fig, ax = plt.subplots(figsize=(14,14))
+    fig, ax = plt.subplots(figsize=(14,20))
     im = ax.imshow(m)
 
     # Show all ticks and label them with the respective list entries
