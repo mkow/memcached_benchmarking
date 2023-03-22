@@ -1,12 +1,16 @@
-#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
-
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 // stolen from https://access.redhat.com/articles/65410
 static int pm_qos_fd = -1;
 
 void start_low_latency(void) {
-    s32_t target = 0;
+    int32_t target = 0;
 
     if (pm_qos_fd >= 0)
         return;
