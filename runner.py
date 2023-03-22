@@ -236,16 +236,16 @@ def print_matrix(rows, cols, m):
         print()
 
 def render_heatmap(rows, cols, m, output_path):
-    x_trim = 32
-    y_trim = 19
-    harvest = np.array([
-        [0.8]*y_trim for _ in range(x_trim)
-    ])
-    rows = rows[:x_trim]
-    cols = cols[:y_trim]
+    # x_trim = 32
+    # y_trim = 19
+    m = np.array(
+        [[m[x,y] for y in cols] for x in rows]
+    )
+    # rows = rows[:x_trim]
+    # cols = cols[:y_trim]
 
     fig, ax = plt.subplots(figsize=(14,14))
-    im = ax.imshow(harvest)
+    im = ax.imshow(m)
 
     # Show all ticks and label them with the respective list entries
     ax.set_xticks(np.arange(len(cols)), labels=cols)
@@ -257,9 +257,9 @@ def render_heatmap(rows, cols, m, output_path):
     # Loop over data dimensions and create text annotations.
     for i in range(len(rows)):
         for j in range(len(cols)):
-            text = ax.text(j, i, harvest[i, j], ha="center", va="center", color="w")
+            text = ax.text(j, i, m[rows[i], cols[j]], ha="center", va="center", color="w")
 
-    ax.set_title("Harvest of local farmers (in tons/year)")
+    # ax.set_title("")
     fig.tight_layout()
     plt.savefig(output_path, dpi=600.0)
 
