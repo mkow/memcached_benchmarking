@@ -257,7 +257,7 @@ def render_heatmap(rows, cols, m, output_path):
     # Loop over data dimensions and create text annotations.
     for i in range(len(rows)):
         for j in range(len(cols)):
-            text = ax.text(j, i, m[i, j], ha="center", va="center", color="w")
+            text = ax.text(j, i, f'{m[i, j]:.1f}%', ha="center", va="center", color="w")
 
     # ax.set_title("")
     fig.tight_layout()
