@@ -250,6 +250,7 @@ def render_heatmap(rows, cols, m, output_path):
     # Show all ticks and label them with the respective list entries
     ax.set_xticks(np.arange(len(cols)), labels=cols)
     ax.set_yticks(np.arange(len(rows)), labels=rows)
+    ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
 
     # Rotate the tick labels and set their alignment.
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
