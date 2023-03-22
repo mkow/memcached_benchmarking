@@ -9,25 +9,25 @@
 #include <unistd.h>
 
 // stolen from https://access.redhat.com/articles/65410
-static int pm_qos_fd = -1;
+static int g_pm_qos_fd = -1;
 
 void start_low_latency(void) {
     int32_t target = 0;
 
-    if (pm_qos_fd >= 0)
+    if (g_pm_qos_fd >= 0)
         return;
 
-    pm_qos_fd = open("/dev/cpu_dma_latency", O_RDWR);
-    if (pm_qos_fd < 0) {
+    g_pm_qos_fd = open("/dev/cpu_dma_latency", O_RDWR);
+    if (g_pm_qos_fd < 0) {
         fprintf(stderr, "Failed to open PM QOS file: %s\n", strerror(errno));
         exit(errno);
     }
-    write(pm_qos_fd, &target, sizeof(target));
+    write(g_pm_qos_fd, &target, sizeof(target));
 }
 
 void stop_low_latency(void) {
-    if (pm_qos_fd >= 0)
-        close(pm_qos_fd);
+    if (g_pm_qos_fd >= 0)
+        close(g_pm_qos_fd);
 }
 
 int main() {
