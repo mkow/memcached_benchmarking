@@ -1,12 +1,18 @@
 ARCH_LIBDIR ?= /lib/$(shell $(CC) -dumpmachine)
 
 SRCDIR = src
-MEMCACHED_SRC ?= memcached-1.5.21.tar.gz
-MEMCACHED_MIRRORS ?= \
-    https://memcached.org/files \
-    https://packages.gramineproject.io/distfiles
 
-MEMCACHED_SHA256 ?= e3d10c06db755b220f43d26d3b68d15ebf737a69c7663529b504ab047efe92f4
+# MEMCACHED_SRC ?= memcached-1.5.21.tar.gz
+# MEMCACHED_MIRRORS ?= \
+#     https://memcached.org/files \
+#     https://packages.gramineproject.io/distfiles
+# MEMCACHED_SHA256 ?= e3d10c06db755b220f43d26d3b68d15ebf737a69c7663529b504ab047efe92f4
+
+MEMCACHED_SRC ?= memcached-1.6.19.tar.gz
+MEMCACHED_MIRRORS ?= \
+    https://memcached.org/files
+MEMCACHED_SHA256 ?= 2fd48b047146398b073a588e97917d9bc908ce51978580d8e0bedaa123b4c70d
+
 # LIBMEMCACHED_SHA256 ?= e22c0bb032fde08f53de9ffbc5a128233041d9f33b5de022c0978a2149885f82
 
 ifeq ($(DEBUG),1)
