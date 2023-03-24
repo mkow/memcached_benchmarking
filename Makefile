@@ -52,7 +52,8 @@ $(SRCDIR)/.MEMCACHED_DOWNLOADED: memcached.tar.gz
 	mkdir $(SRCDIR)
 	tar -C $(SRCDIR) --strip-components=1 -xf memcached.tar.gz
 	sed -i 's/-Werror//g' $(SRCDIR)/configure
-	cd $(SRCDIR) && patch -p1 < ../memcached_hash.patch
+	# only needed for memcached-1.5.21
+	# cd $(SRCDIR) && patch -p1 < ../memcached_hash.patch
 	touch $(SRCDIR)/.MEMCACHED_DOWNLOADED
 
 $(SRCDIR)/memcached: $(SRCDIR)/.MEMCACHED_DOWNLOADED
