@@ -345,16 +345,16 @@ def main_matrix_benchmark(args):
     for srv_threads, req_size in tqdm(todo):
         log('Running sgx...')
         stats = test_sgx(srv_threads, req_size)
-        res_sgx_base[srv_threads,req_size] = stats[0]
+        base_stats[srv_threads,req_size] = stats[0]
         print('-'*150)
-        print_matrix(list(srv_threads_range), list(req_size_range), res_sgx_base)
+        print_matrix(list(srv_threads_range), list(req_size_range), base_stats)
 
     select_gramine_commit('stale-write', checkout_command_template)
     diff_stats = {}
     for srv_threads, req_size in tqdm(todo):
         log('Running sgx...')
         stats = test_sgx(srv_threads, req_size)
-        diff_stats[srv_threads,req_size] = (stats[0] - res_sgx_base[srv_threads,req_size]) / res_sgx_base[srv_threads,req_size] * 100
+        diff_stats[srv_threads,req_size] = (stats[0] - base_stats[srv_threads,req_size]) / base_stats[srv_threads,req_size] * 100
         print('-'*150)
         print_matrix(list(srv_threads_range), list(req_size_range), diff_stats)
     print(list(srv_threads_range), list(req_size_range), diff_stats)
