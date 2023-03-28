@@ -151,6 +151,58 @@ def print_delta_stats(stats, baseline, include_only=None):
         nums = [f'{(num-base)/base*100:+.1f}%' for base, num in zip(baseline_stats, nums)]
         print(fmt.format('Δ' + name, *nums))
 
+def print_matrix(rows, cols, m):
+    # cols = set()
+    # rows = set()
+    # for x,y in m:
+    #     rows.add(x)
+    #     cols.add(y)
+    # cols = list(cols)
+    # cols.sort()
+    # rows = list(rows)
+    # rows.sort()
+    print(f'{"":>8} ', end='')
+    for y in cols:
+        print(f'{y:>8} ', end='')
+    print()
+    for x in rows:
+        print(f'{x:>8} ', end='')
+        for y in cols:
+            if (x,y) in m:
+                print(f'{m[x,y]:>7.1f}% ', end='')
+            else:
+                print(f'{"...":>8} ', end='')
+        print()
+
+def render_heatmap(rows, cols, m, output_path):
+    # x_trim = 32
+    # y_trim = 19
+    m = np.array(
+        [[m[x,y] for y in cols] for x in rows]
+    )
+    # rows = rows[:x_trim]
+    # cols = cols[:y_trim]
+
+    fig, ax = plt.subplots(figsize=(14,20))
+    im = ax.imshow(m)
+
+    # Show all ticks and label them with the respective list entries
+    ax.set_xticks(np.arange(len(cols)), labels=cols)
+    ax.set_yticks(np.arange(len(rows)), labels=rows)
+    ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=-45, ha="right", rotation_mode="anchor")
+
+    # Loop over data dimensions and create text annotations.
+    for i in range(len(rows)):
+        for j in range(len(cols)):
+            text = ax.text(j, i, f'{m[i, j]:.1f}%', ha="center", va="center", color="w")
+
+    # ax.set_title("")
+    fig.tight_layout()
+    plt.savefig(output_path, dpi=600.0)
+
 def main_rwlock_benchmark(args):
     if len(args) < 1:
         print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
@@ -213,58 +265,6 @@ def main_rwlock_benchmark(args):
         include_only = ['rwlock-sgx']
     )
     return 0
-
-def print_matrix(rows, cols, m):
-    # cols = set()
-    # rows = set()
-    # for x,y in m:
-    #     rows.add(x)
-    #     cols.add(y)
-    # cols = list(cols)
-    # cols.sort()
-    # rows = list(rows)
-    # rows.sort()
-    print(f'{"":>8} ', end='')
-    for y in cols:
-        print(f'{y:>8} ', end='')
-    print()
-    for x in rows:
-        print(f'{x:>8} ', end='')
-        for y in cols:
-            if (x,y) in m:
-                print(f'{m[x,y]:>7.1f}% ', end='')
-            else:
-                print(f'{"...":>8} ', end='')
-        print()
-
-def render_heatmap(rows, cols, m, output_path):
-    # x_trim = 32
-    # y_trim = 19
-    m = np.array(
-        [[m[x,y] for y in cols] for x in rows]
-    )
-    # rows = rows[:x_trim]
-    # cols = cols[:y_trim]
-
-    fig, ax = plt.subplots(figsize=(14,20))
-    im = ax.imshow(m)
-
-    # Show all ticks and label them with the respective list entries
-    ax.set_xticks(np.arange(len(cols)), labels=cols)
-    ax.set_yticks(np.arange(len(rows)), labels=rows)
-    ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
-
-    # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=-45, ha="right", rotation_mode="anchor")
-
-    # Loop over data dimensions and create text annotations.
-    for i in range(len(rows)):
-        for j in range(len(cols)):
-            text = ax.text(j, i, f'{m[i, j]:.1f}%', ha="center", va="center", color="w")
-
-    # ax.set_title("")
-    fig.tight_layout()
-    plt.savefig(output_path, dpi=600.0)
 
 def main_matrix_benchmark(args):
     if len(args) < 1:
