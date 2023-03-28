@@ -19,6 +19,7 @@ PORT = 10000 + randint(0, 20000)
 COMMITS = [
     ('origin', '634d0392c3acec724dad5a6af8e6305f166eca57', 'master'), # merge_base(master, borys/handle_map)
     ('origin', '46c5b157012dce9c7cf943fc7fe9e4e27a20eeaf', 'rwlock'), # borys/handle_map
+    ('mkow', '63fe7cb832c480cee468fe8ea3ba638ffc69db1d', 'stale-write'), # mkow/perf-testing
 ]
 # for noisy commands output
 LOG_PATH = f'log_{str(datetime.now())}.txt'
@@ -280,7 +281,9 @@ def main_matrix_benchmark(args):
 
     for remote, commit, title in COMMITS:
         # the ugly part
-        if title == 'rwlock':
+        commit_to_select = 'stale-write'
+        # commit_to_select = 'rwlock'
+        if title == commit_to_select:
             log(f'Checking {remote}/{commit}...')
             assert 'REMOTE' in args[1]
             assert 'COMMIT' in args[1]
@@ -300,7 +303,7 @@ def main_matrix_benchmark(args):
             )
             break
     else:
-        raise RuntimeError('rwlock commit not specified!')
+        raise RuntimeError(f'{commit_to_select} commit not specified!')
 
     # srv_threads_range = range(16, 19)
     srv_threads_range = range(1, 33)
