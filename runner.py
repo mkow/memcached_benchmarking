@@ -16,11 +16,6 @@ from tqdm import tqdm
 
 HOST = '127.0.0.1'
 PORT = 10000 + randint(0, 20000)
-COMMITS = [
-    ('origin', '634d0392c3acec724dad5a6af8e6305f166eca57', 'master'), # merge_base(master, borys/handle_map)
-    ('origin', '46c5b157012dce9c7cf943fc7fe9e4e27a20eeaf', 'rwlock'), # borys/handle_map
-    ('mkow', '63fe7cb832c480cee468fe8ea3ba638ffc69db1d', 'stale-write'), # mkow/perf-testing
-]
 # for noisy commands output
 LOG_PATH = f'log_{str(datetime.now())}.txt'
 logf = open(LOG_PATH, 'w')
@@ -266,29 +261,20 @@ def main_rwlock_benchmark(args):
     )
     return 0
 
-def main_matrix_benchmark(args):
-    if len(args) < 1:
-        print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
-        return 2
-
-    subprocess.run(
-        'make -j8',
-        shell=True,
-        check=True,
-        stdout=logf,
-        stderr=logf,
-    )
-
+def select_gramine_commit(commit_title_to_select, checkout_command_template):
+    COMMITS = [
+        ('origin', '634d0392c3acec724dad5a6af8e6305f166eca57', 'master'), # merge_base(master, borys/handle_map)
+        ('origin', '46c5b157012dce9c7cf943fc7fe9e4e27a20eeaf', 'rwlock'), # borys/handle_map
+        ('mkow', '63fe7cb832c480cee468fe8ea3ba638ffc69db1d', 'stale-write'), # mkow/perf-testing
+    ]
     for remote, commit, title in COMMITS:
         # the ugly part
-        commit_to_select = 'stale-write'
-        # commit_to_select = 'rwlock'
-        if title == commit_to_select:
+        if title == commit_title_to_select:
             log(f'Checking {remote}/{commit}...')
-            assert 'REMOTE' in args[1]
-            assert 'COMMIT' in args[1]
+            assert 'REMOTE' in checkout_command_template
+            assert 'COMMIT' in checkout_command_template
             subprocess.run(
-                args[1].replace('REMOTE', remote).replace('COMMIT', commit),
+                checkout_command_template.replace('REMOTE', remote).replace('COMMIT', commit),
                 shell=True,
                 check=True,
                 stdout=logf,
@@ -303,38 +289,80 @@ def main_matrix_benchmark(args):
             )
             break
     else:
-        raise RuntimeError(f'{commit_to_select} commit not specified!')
+        raise RuntimeError(f'{commit_title_to_select} commit not specified!')
 
-    # srv_threads_range = range(16, 19)
-    srv_threads_range = range(1, 33)
-    # req_size_range = range(4096, 4096*3, 4096)
-    req_size_range = range(4096, 4096*20, 4096)
-    res_direct = {}
-    res_sgx = {}
+def main_matrix_benchmark(args):
+    if len(args) < 1:
+        print(f'Usage: {args[0]} CHECKOUT_COMMAND_TEMPLATE')
+        return 2
+    checkout_command_template = args[1]
+
+    subprocess.run(
+        'make -j8',
+        shell=True,
+        check=True,
+        stdout=logf,
+        stderr=logf,
+    )
+    select_gramine_commit('rwlock', checkout_command_template)
+
+    srv_threads_range = range(16, 19)
+    # srv_threads_range = range(1, 33)
+    req_size_range = range(4096, 4096*3, 4096)
+    # req_size_range = range(4096, 4096*20, 4096)
+    # res_direct = {}
+    # res_sgx = {}
+    # todo = list(product(srv_threads_range, req_size_range))
+    # random.shuffle(todo) # for faster/better live results overview, plus less accidental time correlation
+    # for srv_threads, req_size in tqdm(todo):
+    #     log('Running native...')
+    #     native_stats = test_native(srv_threads, req_size)
+    #     log('Running direct...')
+    #     stats = test_direct(srv_threads, req_size)
+    #     # Only Ops/s
+    #     res_direct[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
+    #     log('Running sgx...')
+    #     stats = test_sgx(srv_threads, req_size)
+    #     res_sgx[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
+    #     print('-'*150)
+    #     print_matrix(list(srv_threads_range), list(req_size_range), res_direct)
+    #     print()
+    #     print_matrix(list(srv_threads_range), list(req_size_range), res_sgx)
+    # print(list(srv_threads_range), list(req_size_range), res_direct)
+    # print(list(srv_threads_range), list(req_size_range), res_sgx)
+    # log(list(srv_threads_range), list(req_size_range), res_direct)
+    # log(list(srv_threads_range), list(req_size_range), res_sgx)
+    # render_heatmap(list(srv_threads_range), list(req_size_range), res_direct, 'heatmap_direct.png')
+    # render_heatmap(list(srv_threads_range), list(req_size_range), res_sgx, 'heatmap_sgx.png')
+
+
+    # TODO: both tests should be randomized between each other, but that complicates setup
+    #       (switching between 2 gramines)
+
     todo = list(product(srv_threads_range, req_size_range))
     random.shuffle(todo) # for faster/better live results overview, plus less accidental time correlation
+    base_stats = {}
     for srv_threads, req_size in tqdm(todo):
-        log('Running native...')
-        native_stats = test_native(srv_threads, req_size)
-        log('Running direct...')
-        stats = test_direct(srv_threads, req_size)
-        # Only Ops/s
-        res_direct[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
         log('Running sgx...')
         stats = test_sgx(srv_threads, req_size)
-        res_sgx[srv_threads,req_size] = (stats[0] - native_stats[0]) / native_stats[0] * 100
-    # print(res_direct)
-    # print(res_sgx)
+        res_sgx_base[srv_threads,req_size] = stats[0]
         print('-'*150)
-        print_matrix(list(srv_threads_range), list(req_size_range), res_direct)
-        print()
-        print_matrix(list(srv_threads_range), list(req_size_range), res_sgx)
-    print(list(srv_threads_range), list(req_size_range), res_direct)
-    print(list(srv_threads_range), list(req_size_range), res_sgx)
-    log(list(srv_threads_range), list(req_size_range), res_direct)
-    log(list(srv_threads_range), list(req_size_range), res_sgx)
-    render_heatmap(list(srv_threads_range), list(req_size_range), res_direct, 'heatmap_direct.png')
-    render_heatmap(list(srv_threads_range), list(req_size_range), res_sgx, 'heatmap_sgx.png')
+        print_matrix(list(srv_threads_range), list(req_size_range), res_sgx_base)
+
+    select_gramine_commit('stale-write', checkout_command_template)
+    diff_stats = {}
+    for srv_threads, req_size in tqdm(todo):
+        log('Running sgx...')
+        stats = test_sgx(srv_threads, req_size)
+        diff_stats[srv_threads,req_size] = (stats[0] - res_sgx_base[srv_threads,req_size]) / res_sgx_base[srv_threads,req_size] * 100
+        print('-'*150)
+        print_matrix(list(srv_threads_range), list(req_size_range), diff_stats)
+    print(list(srv_threads_range), list(req_size_range), diff_stats)
+    log(list(srv_threads_range), list(req_size_range), diff_stats)
+    render_heatmap(list(srv_threads_range), list(req_size_range), diff_stats, 'heatmap_sgx.png')
+
+
+
     # print_matrix({(1, 4096): -0.6081262562310951, (1, 8192): -0.6720628415164789, (2, 4096): -0.43903119908452604, (2, 8192): -0.4794070685294414})
     # print()
     # print_matrix({(1, 4096): -0.8768565256309072, (1, 8192): -0.8946999014260856, (2, 4096): -0.7859536577388341, (2, 8192): -0.8191668526645598})
