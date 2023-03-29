@@ -18,7 +18,7 @@ HOST = '127.0.0.1'
 PORT = 10000 + randint(0, 20000)
 # for noisy commands output
 LOG_PATH = f'log_{str(datetime.now())}.txt'
-logf = open(LOG_PATH, 'w')
+logf = open(LOG_PATH, 'a')
 
 # only for some progress prints
 VERBOSE = False
@@ -304,12 +304,12 @@ def main_matrix_benchmark(args):
         stdout=logf,
         stderr=logf,
     )
-    select_gramine_commit('rwlock', checkout_command_template)
+    select_gramine_commit('master', checkout_command_template)
 
-    # srv_threads_range = range(16, 19)
-    srv_threads_range = range(1, 33)
-    # req_size_range = range(4096, 4096*3, 4096)
-    req_size_range = range(4096, 4096*20, 4096)
+    srv_threads_range = range(16, 19)
+    # srv_threads_range = range(1, 33)
+    req_size_range = range(4096, 4096*3, 4096)
+    # req_size_range = range(4096, 4096*20, 4096)
     # res_direct = {}
     # res_sgx = {}
     # todo = list(product(srv_threads_range, req_size_range))
@@ -349,7 +349,7 @@ def main_matrix_benchmark(args):
         print('-'*150)
         print_matrix(list(srv_threads_range), list(req_size_range), base_stats)
 
-    select_gramine_commit('stale-write', checkout_command_template)
+    select_gramine_commit('rwlock', checkout_command_template)
     diff_stats = {}
     for srv_threads, req_size in tqdm(todo):
         log('Running sgx...')
