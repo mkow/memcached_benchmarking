@@ -306,10 +306,10 @@ def main_matrix_benchmark(args):
     )
     select_gramine_commit('master', checkout_command_template)
 
-    # srv_threads_range = range(16, 19)
-    srv_threads_range = range(1, 33)
-    # req_size_range = range(4096, 4096*3, 4096)
-    req_size_range = range(4096, 4096*20, 4096)
+    srv_threads_range = range(16, 19)
+    # srv_threads_range = range(1, 33)
+    req_size_range = range(4096, 4096*3, 4096)
+    # req_size_range = range(4096, 4096*20, 4096)
     # res_direct = {}
     # res_sgx = {}
     # todo = list(product(srv_threads_range, req_size_range))
